@@ -2,7 +2,7 @@ from transformers import AutoImageProcessor, AutoModelForImageClassification
 from PIL import Image
 import torch
 
-MODEL_NAME = "sanjeevani-04/indian-crop-disease-mobilenetv2"
+MODEL_NAME = "Hhsjsnns/Rice-Wheat-Corn-DiseaseCLS"
 
 extractor = AutoImageProcessor.from_pretrained(MODEL_NAME)
 model = AutoModelForImageClassification.from_pretrained(MODEL_NAME)
@@ -25,7 +25,7 @@ def predict_disease(image_path: str, top_k: int=3):
     confidence = probs[idx].item() * 100
     results.append({
         "disease": label,
-        'confidence': round(confidence, 4)
+        'confidence': round(confidence, 2)
     })
 
   return results

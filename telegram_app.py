@@ -10,6 +10,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 from core.agent import *
 from core.audio import *
 from core.model import *
+from core.db import *
 
 load_dotenv()
 
@@ -61,27 +62,34 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle text messages."""
     user_text = update.message.text.strip()
     lang_code = detect_language(user_text)
+    chat_id = update.effective_chat.id
 
     logger.info(f"Text: '{user_text}' | Lang: {lang_code}")
 
     # Show typing indicator
     await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id,
+        chat_id=chat_id,
         action="typing"
     )
+
+    await save_message(chat_id, "user", user_text)  # Save user message to DB
 
     if is_greeting(user_text):
         reply = get_welcome_message(lang_code)
     else:
-        reply = answer_general_question(user_text, language_code=lang_code)
+        history = await get_history(chat_id,limit=5)
+        reply = answer_general_question(user_text, language_code=lang_code, history=history)
 
+    await save_message(chat_id, "assistant", reply)  # Save bot reply to DB
     await update.message.reply_text(reply)
 
 
 async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle crop photos — run disease detection."""
+    
+    chat_id = update.effective_chat.id
     await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id,
+        chat_id=chat_id,
         action="typing"
     )
 
@@ -108,11 +116,15 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     caption   = update.message.caption or ""
     lang_code = detect_language(caption) if caption else "en"
 
+    await save_message(chat_id, "user", f"Image: {top['disease']} ({top['confidence']:.0%}) | Caption: {caption}")
+    history = await get_history(chat_id, limit=5)
+
     reply = get_advice(
         disease_label  = top["disease"],
         confidence     = top["confidence"],
         transcript     = caption,
-        reply_language = lang_code
+        reply_language = lang_code,
+        history          = history
     )
     
 
@@ -121,8 +133,9 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle voice notes — transcribe and reply with voice."""
+    chat_id = update.effective_chat.id
     await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id,
+        chat_id=chat_id,
         action="record_voice"
     )
 
@@ -155,8 +168,12 @@ async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(get_welcome_message(lang_code))
         return
 
+    await save_message(chat_id, 'user', transcript)  # Save user message to DB
+    history = await get_history(chat_id, limit=5)
     # Generate text reply
-    reply_text = answer_general_question(transcript, language_code=lang_code)
+    reply_text = answer_general_question(transcript, language_code=lang_code, history=history)
+
+    await save_message(chat_id, 'assistant', reply_text)  # Save bot reply to DB
 
     # Convert to voice
     audio_path = text_to_audio(reply_text, lang_code)
@@ -180,10 +197,15 @@ async def handle_unsupported(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 #----------------------Main Function------------------------------
+async def on_startup(app: Application):
+    """Initialize database connection on bot startup."""
+    await init_db()
+    logger.info("Database initialized and ready.")
+
 def main():
     print("🚀 Starting KrishiVani Telegram bot...")
 
-    app = Application.builder().token(BOT_TOKEN).build()
+    app = Application.builder().token(BOT_TOKEN).post_init(on_startup).build()
 
     # Register handlers
     app.add_handler(CommandHandler("start", start))

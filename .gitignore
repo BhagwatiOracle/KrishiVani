@@ -1,6 +1,5 @@
 .env
 venv
-
 logs/
 uploads/
 /__pycache__/
