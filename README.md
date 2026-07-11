@@ -81,9 +81,6 @@ flowchart TD
 
 ## 🎬 Demo
 
-
-## 📽️ Demo
-
 ▶️ **[Watch Demo](assets/Demo.mp4)**
 
 
