@@ -40,7 +40,7 @@ A Telegram bot that helps farmers gets instant crop diagnosis by uploading photo
 
 
 
-<<<<<<< HEAD
+
 ## 🔄 Workflow
 
 ```mermaid
