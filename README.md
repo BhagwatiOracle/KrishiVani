@@ -39,9 +39,8 @@ A Telegram bot that helps farmers gets instant crop diagnosis by uploading photo
     The system supports both Hindi and English, making it easier for farmers to interact in their preferred language.
 
 
-## Workflow
 
-<div style="width:600px">
+## 🔄 Workflow
 
 
 ```mermaid
@@ -54,7 +53,7 @@ flowchart TD
     U -->|Voice Message| V[Voice Input]
 
     V --> W[Whisper ASR<br/>Speech-to-Text]
-    I --> M[Fine-tuned ViT Model<br/>Crop Disease Detection]
+    I --> M[Fine-tuned VIT Model<br/>Crop Disease Detection]
 
     T --> PB
     W --> PB
@@ -75,4 +74,19 @@ flowchart TD
 
     TTS --> AUDIO[🔊 Voice Response]
 ```
+
+
+## 🎬 Demo
+
+<details>
+  <summary><strong>📌 Click to expand Demo</strong></summary>
+
+  <p align="center">
+    <video src="assets\Demo.mp4" width="640" conrtols></video>
+  </p>
+
+</details>
+
+
+
 
