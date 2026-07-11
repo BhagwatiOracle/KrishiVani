@@ -2,7 +2,7 @@
   <img src="assets/logo.png" alt="Pycoder" width="40%">
 </p>
 
-A Telegram bot that helps farmers gets instant crop diagnosis by uploading photo of defected crop & gives smart farming suggestion by sending text & voice message.
+A Telegram bot that helps farmers gets instant crop diagnosis by uploading photo of defected crop & gives smart farming suggestion by sending text & voice message. [Demo](https://youtu.be/3urF4-SS9Ew)
 
 
 # ✨ Features
@@ -76,9 +76,7 @@ flowchart TD
 ```
 
 
-## 🎬 Demo
 
-▶️ **[Watch Demo](assets/Demo.mp4)**
 
 
 
