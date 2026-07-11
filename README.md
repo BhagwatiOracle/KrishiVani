@@ -43,9 +43,6 @@ A Telegram bot that helps farmers gets instant crop diagnosis by uploading photo
 <<<<<<< HEAD
 ## 🔄 Workflow
 
-=======
->>>>>>> d2862085c5893644be4393d2789b041283cd6f32
-
 ```mermaid
 flowchart TD
 
